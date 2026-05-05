@@ -1,0 +1,50 @@
+name: Update MASTER-CONTEXT.md
+
+on:
+  schedule:
+    # Bi-weekly: 9 AM UTC on the 1st and 15th of every month
+    - cron: "0 9 1,15 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-master:
+    name: Regenerate MASTER-CONTEXT.md
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_VERTEX_PROJECT_ID: snabbit-ai-productivity
+      CLOUD_ML_REGION: global
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install "anthropic[vertex]" pyyaml
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Regenerate MASTER-CONTEXT.md
+        run: python scripts/update_master.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add MASTER-CONTEXT.md
+          git diff --cached --quiet && echo "MASTER-CONTEXT.md unchanged, skipping commit." || {
+            git commit -m "chore: auto-regenerate MASTER-CONTEXT.md"
+            git push
+          }

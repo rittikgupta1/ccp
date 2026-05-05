@@ -1,0 +1,58 @@
+name: AI Review PR
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: AI-powered PR review
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_VERTEX_PROJECT_ID: snabbit-ai-productivity
+      CLOUD_ML_REGION: global
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install "anthropic[vertex]" pyyaml
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Run AI review
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          # Collect PR diff and index content
+          DIFF=$(gh pr diff "$PR_NUMBER" --repo "$GITHUB_REPOSITORY")
+          INDEX=$(cat INDEX.md 2>/dev/null || echo "INDEX.md not found")
+
+          # Write inputs to temp files for the review script
+          echo "$DIFF" > /tmp/pr_diff.txt
+          echo "$INDEX" > /tmp/index_content.txt
+
+          # Run the review
+          python scripts/review.py \
+            --pr "$PR_NUMBER" \
+            --diff-file /tmp/pr_diff.txt \
+            --index-file /tmp/index_content.txt

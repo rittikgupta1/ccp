@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+*.env
+.DS_Store
+*.log
+node_modules/
+.venv/
+venv/
+credentials.json
+service-account.json
+application_default_credentials.json

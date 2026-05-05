@@ -1,0 +1,81 @@
+# CCP — Central Context Package Configuration
+# Edit this file to configure your knowledge base.
+
+org: snabbit-tech
+repo: ccp
+
+teams:
+  - data
+  - ops
+  - product
+  - engineering
+
+# Role hierarchy: contributor < reviewer < admin
+# Admins: direct commit to main + can bypass AI review
+# Reviewers: can approve PRs from their team
+# Contributors: must raise PRs, need approval
+roles:
+  admin:
+    users:
+      - ritikguptasnabbit
+      - abhiram-snabbit
+    can: [direct_commit, approve, merge, archive, skip_review]
+  reviewer:
+    users:
+      - neha-snabbit
+      - ravi-snabbit
+      - meera-snabbit
+    can: [approve_own_team, comment, request_changes]
+  contributor:
+    users: []  # everyone else defaults to contributor
+
+# Content types with different quality gates and expiry
+content_types:
+  analysis:
+    description: "SQL-backed analysis, metrics, quantitative findings"
+    approval: reviewer_or_admin
+    expiry_days: 90
+  query:
+    description: "Reusable SQL/PySpark query or code snippet"
+    approval: reviewer_or_admin
+    expiry_days: 180
+  playbook:
+    description: "Operational process or escalation path"
+    approval: reviewer_or_admin
+    expiry_days: 90
+  decision:
+    description: "A decision that was made and why"
+    approval: admin_only
+    expiry_days: 365
+  insight:
+    description: "Observation or hypothesis (may lack hard data)"
+    approval: any
+    expiry_days: 45
+  model:
+    description: "ML model, approach, results, evaluation"
+    approval: reviewer_or_admin
+    expiry_days: 180
+
+# AI settings
+ai:
+  provider: vertex       # "vertex" or "anthropic"
+  project: snabbit-ai-productivity
+  region: global
+  model: claude-haiku-4-5-20251001
+  review_model: claude-sonnet-4-6-20250514
+
+# Secrets scanner patterns
+scanner:
+  block:
+    - 'sk-[a-zA-Z0-9]{20,}'
+    - 'gho_[a-zA-Z0-9]{36}'
+    - 'ghp_[A-Za-z0-9]{36}'
+    - 'dapi[a-zA-Z0-9]{32,}'
+    - 'dbc-[a-f0-9-]{36}'
+    - '-----BEGIN (RSA |EC )?PRIVATE KEY-----'
+    - 'AKIA[0-9A-Z]{16}'
+  warn:
+    - '\b[6-9][0-9]{9}\b'
+    - '\b\d{4}\s?\d{4}\s?\d{4}\b'
+
+auto_sync_minutes: 120

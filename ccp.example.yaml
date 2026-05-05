@@ -1,0 +1,62 @@
+# CCP — Central Context Package — Example Configuration
+# Copy this to ccp.yaml and edit for your team.
+
+org: your-org
+repo: ccp
+
+teams:
+  - engineering
+  - product
+  - design
+  - marketing
+
+roles:
+  admin:
+    users:
+      - github-username-1
+      - github-username-2
+    can: [direct_commit, approve, merge, archive, skip_review]
+  reviewer:
+    users:
+      - github-username-3
+    can: [approve_own_team, comment, request_changes]
+  contributor:
+    users: []
+
+content_types:
+  analysis:
+    description: "Data-backed analysis with metrics"
+    approval: reviewer_or_admin
+    expiry_days: 90
+  query:
+    description: "Reusable code or query"
+    approval: reviewer_or_admin
+    expiry_days: 180
+  playbook:
+    description: "Process documentation"
+    approval: reviewer_or_admin
+    expiry_days: 90
+  decision:
+    description: "Decision record with rationale"
+    approval: admin_only
+    expiry_days: 365
+  insight:
+    description: "Observation or hypothesis"
+    approval: any
+    expiry_days: 45
+
+ai:
+  provider: anthropic          # "vertex" for GCP, "anthropic" for direct API
+  model: claude-haiku-4-5-20251001
+  review_model: claude-sonnet-4-6-20250514
+
+scanner:
+  block:
+    - 'sk-[a-zA-Z0-9]{20,}'
+    - 'ghp_[A-Za-z0-9]{36}'
+    - '-----BEGIN (RSA |EC )?PRIVATE KEY-----'
+    - 'AKIA[0-9A-Z]{16}'
+  warn:
+    - '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+
+auto_sync_minutes: 120
