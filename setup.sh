@@ -126,7 +126,52 @@ export CCP_USER="$CCP_USER"
 export CCP_TEAM="$CCP_TEAM"
 export CCP_ROOT="$CCP_DIR"
 
-# ── Step 8: Set up auto-sync (pull every 2 hours) ──
+# ── Step 8: Install kb command globally + Claude Code /kb skill ──
+info "Installing kb command..."
+mkdir -p "$HOME/bin"
+cat > "$HOME/bin/kb" <<KBEOF
+#!/bin/bash
+export CCP_USER="\${CCP_USER:-$CCP_USER}"
+export CCP_ROOT="\${CCP_ROOT:-$CCP_DIR}"
+exec python3 "\$CCP_ROOT/scripts/kb.py" "\$@"
+KBEOF
+chmod +x "$HOME/bin/kb"
+
+grep -q 'HOME/bin' "$HOME/.zshenv" 2>/dev/null || echo 'export PATH="$HOME/bin:$PATH"' >> "$HOME/.zshenv"
+ok "kb command installed at ~/bin/kb"
+
+# Install /kb slash command for Claude Code
+if command -v claude &>/dev/null; then
+  mkdir -p "$HOME/.claude/commands"
+  cp "$CCP_DIR/.claude/commands/kb.md" "$HOME/.claude/commands/kb.md" 2>/dev/null || \
+  cat > "$HOME/.claude/commands/kb.md" <<'CMDEOF'
+Save knowledge to the CCP (Central Context Package) team knowledge base.
+
+The user will provide: a title, team, content type, and the content to save. Parse these from the argument string: `/kb <title> --team <team> --type <type>`.
+
+If arguments are missing, ask the user:
+- **title**: What to call this entry (required)
+- **team**: One of `data`, `ops`, `product`, `engineering` (required)
+- **type**: One of `analysis`, `query`, `playbook`, `decision`, `insight`, `model` (default: `analysis`)
+
+Steps:
+1. Get the content to save. It can come from:
+   - The user pasting it in the conversation
+   - A file path the user provides (read it)
+   - The output/result of work done earlier in this conversation (summarize the key findings, queries, and conclusions)
+2. Run: `export PATH="$HOME/bin:$PATH" && echo '<content>' | kb "<title>" --team <team> --type <type>`
+3. If the save succeeds, show the user the file path and confirm.
+4. If it fails (secrets detected, review failed), show the error and help the user fix it.
+
+Example usage:
+- `/kb Weekend SLA Analysis --team data --type analysis` then paste content
+- `/kb` (interactive — ask for title, team, type, and content)
+- After doing analysis work: `/kb` to save the findings from this conversation
+CMDEOF
+  ok "Claude Code /kb slash command installed"
+fi
+
+# ── Step 9: Set up auto-sync (pull every 2 hours) ──
 info "Setting up auto-sync..."
 
 if [[ "$(uname)" == "Darwin" ]]; then
