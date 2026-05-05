@@ -19,6 +19,7 @@ roles:
     users:
       - ritikguptasnabbit
       - abhiram-snabbit
+      - abhiram23nair-maker
     can: [direct_commit, approve, merge, archive, skip_review]
   reviewer:
     users:
