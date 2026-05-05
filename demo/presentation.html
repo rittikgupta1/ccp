@@ -7,252 +7,434 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #f0f0f0; overflow: hidden; }
+  code, .mono { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; }
 
-  .slide { width: 100vw; height: 100vh; display: none; flex-direction: column; justify-content: center; padding: 60px 100px; position: relative; }
+  .slide { width: 100vw; height: 100vh; display: none; flex-direction: column; justify-content: center; padding: 50px 80px; position: relative; overflow-y: auto; }
   .slide.active { display: flex; }
 
-  /* Navigation */
-  .nav { position: fixed; bottom: 30px; right: 40px; z-index: 100; display: flex; gap: 12px; align-items: center; }
+  .nav { position: fixed; bottom: 24px; right: 40px; z-index: 100; display: flex; gap: 12px; align-items: center; }
   .nav button { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
   .nav button:hover { background: rgba(255,255,255,0.2); }
   .nav span { color: rgba(255,255,255,0.4); font-size: 13px; }
 
-  /* Slide 1 — Title */
-  .slide-1 { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0d0d2b 100%); text-align: center; justify-content: center; align-items: center; }
-  .slide-1 h1 { font-size: 72px; font-weight: 800; letter-spacing: -2px; margin-bottom: 16px; }
-  .slide-1 h1 span { background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .slide-1 .subtitle { font-size: 26px; color: rgba(255,255,255,0.6); margin-bottom: 40px; max-width: 700px; line-height: 1.5; }
-  .slide-1 .tagline { font-size: 18px; color: rgba(255,255,255,0.35); font-style: italic; }
-  .logo-box { display: inline-flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 32px; margin-bottom: 30px; }
-  .logo-box .icon { font-size: 48px; }
+  /* ── Slide 1: Title ── */
+  .slide-1 { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0d0d2b 100%); text-align: center; align-items: center; }
+  .slide-1 .badge { display: inline-block; font-size: 13px; letter-spacing: 3px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 12px; }
+  .slide-1 h1 { font-size: 80px; font-weight: 800; letter-spacing: -3px; margin-bottom: 10px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .slide-1 .sub { font-size: 28px; color: rgba(255,255,255,0.55); margin-bottom: 36px; }
+  .slide-1 .desc { font-size: 18px; color: rgba(255,255,255,0.4); max-width: 750px; line-height: 1.7; margin-bottom: 40px; }
+  .pill-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .pill { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 8px 18px; font-size: 13px; color: rgba(255,255,255,0.5); }
+  .pill strong { color: rgba(255,255,255,0.8); }
 
-  /* Slide 2 — Problem */
+  /* ── Slide 2: Problem ── */
   .slide-2 { background: linear-gradient(135deg, #1a0a0a 0%, #2a1515 100%); }
-  .slide-2 h2 { font-size: 48px; font-weight: 700; margin-bottom: 50px; color: #ff6b6b; }
-  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-  .problem-card { background: rgba(255,100,100,0.06); border: 1px solid rgba(255,100,100,0.15); border-radius: 16px; padding: 30px; }
-  .problem-card h3 { font-size: 20px; margin-bottom: 12px; color: #ff8a8a; }
-  .problem-card p { font-size: 16px; color: rgba(255,255,255,0.6); line-height: 1.6; }
-  .problem-card .stat { font-size: 36px; font-weight: 800; color: #ff6b6b; margin-bottom: 8px; }
+  .slide-2 h2 { font-size: 44px; font-weight: 700; margin-bottom: 36px; color: #ff6b6b; }
+  .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .p-card { background: rgba(255,100,100,0.05); border: 1px solid rgba(255,100,100,0.12); border-radius: 14px; padding: 26px; }
+  .p-card .icon { font-size: 28px; margin-bottom: 10px; }
+  .p-card h3 { font-size: 19px; margin-bottom: 8px; color: #ff8a8a; }
+  .p-card p { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+  .p-card .example { margin-top: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: rgba(255,255,255,0.4); border-left: 3px solid #ff6b6b; }
 
-  /* Slide 3 — Solution */
-  .slide-3 { background: linear-gradient(135deg, #0a1a0a 0%, #152a15 100%); }
-  .slide-3 h2 { font-size: 48px; font-weight: 700; margin-bottom: 40px; color: #51cf66; }
-  .flow-container { display: flex; flex-direction: column; gap: 20px; }
-  .flow-step { display: flex; align-items: center; gap: 20px; background: rgba(81,207,102,0.06); border: 1px solid rgba(81,207,102,0.15); border-radius: 14px; padding: 22px 28px; }
-  .flow-step .num { font-size: 28px; font-weight: 800; color: #51cf66; min-width: 40px; }
-  .flow-step .cmd { font-family: 'SF Mono', 'Fira Code', monospace; background: rgba(0,0,0,0.4); padding: 6px 14px; border-radius: 8px; font-size: 15px; color: #a9e34b; white-space: nowrap; }
-  .flow-step .desc { font-size: 17px; color: rgba(255,255,255,0.7); }
-  .flow-step .arrow { color: rgba(81,207,102,0.4); font-size: 20px; }
+  /* ── Slide 3: How It Works ── */
+  .slide-3 { background: linear-gradient(135deg, #0a1a0a 0%, #152a15 100%); padding: 40px 70px; }
+  .slide-3 h2 { font-size: 42px; font-weight: 700; margin-bottom: 10px; color: #51cf66; }
+  .slide-3 .subtitle { font-size: 16px; color: rgba(255,255,255,0.4); margin-bottom: 28px; }
+  .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .how-left { display: flex; flex-direction: column; gap: 14px; }
+  .step { display: flex; gap: 14px; background: rgba(81,207,102,0.05); border: 1px solid rgba(81,207,102,0.12); border-radius: 12px; padding: 16px 20px; align-items: flex-start; }
+  .step .num { font-size: 22px; font-weight: 800; color: #51cf66; min-width: 32px; }
+  .step .label { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+  .step .label strong { color: #a9e34b; }
+  .step .cmd { display: block; margin-top: 6px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 6px; font-size: 13px; color: #a9e34b; }
+  .how-right { background: rgba(81,207,102,0.04); border: 1px solid rgba(81,207,102,0.1); border-radius: 14px; padding: 22px; }
+  .how-right h3 { font-size: 16px; color: #51cf66; margin-bottom: 14px; letter-spacing: 1px; text-transform: uppercase; }
+  .config-block { background: rgba(0,0,0,0.4); border-radius: 10px; padding: 14px 18px; font-size: 12px; line-height: 1.7; color: rgba(255,255,255,0.6); white-space: pre; overflow-x: auto; margin-bottom: 16px; }
+  .config-block .key { color: #74c0fc; }
+  .config-block .val { color: #a9e34b; }
+  .config-block .cmt { color: rgba(255,255,255,0.25); }
+  .role-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .role-table th { text-align: left; color: rgba(255,255,255,0.4); padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  .role-table td { padding: 5px 8px; color: rgba(255,255,255,0.65); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .role-table .role-name { color: #fff; font-weight: 600; }
 
-  /* Slide 4 — Use Case */
-  .slide-4 { background: linear-gradient(135deg, #0a0f1a 0%, #151f30 100%); padding: 50px 80px; }
-  .slide-4 h2 { font-size: 42px; font-weight: 700; margin-bottom: 30px; color: #74c0fc; }
-  .usecase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .uc-card { background: rgba(116,192,252,0.05); border: 1px solid rgba(116,192,252,0.12); border-radius: 14px; padding: 24px; }
-  .uc-card h3 { font-size: 16px; color: #74c0fc; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-  .uc-card .highlight { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-  .uc-card p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; }
-  .uc-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-  .uc-table th { text-align: left; font-size: 12px; color: rgba(255,255,255,0.4); padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px; }
-  .uc-table td { font-size: 14px; padding: 8px 10px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .uc-table .rain { color: #74c0fc; }
-  .uc-table .ops { color: #ffa94d; }
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  /* ── Slide 4: Use Case ── */
+  .slide-4 { background: linear-gradient(135deg, #0a0f1a 0%, #151f30 100%); padding: 36px 70px; }
+  .slide-4 h2 { font-size: 38px; font-weight: 700; margin-bottom: 6px; color: #74c0fc; }
+  .slide-4 .sub { font-size: 15px; color: rgba(255,255,255,0.4); margin-bottom: 22px; }
+  .uc-top { display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; margin-bottom: 18px; }
+  .uc-card { background: rgba(116,192,252,0.04); border: 1px solid rgba(116,192,252,0.1); border-radius: 12px; padding: 18px 22px; }
+  .uc-card h3 { font-size: 13px; color: #74c0fc; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .uc-card .big { font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .uc-card p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .uc-table { width: 100%; border-collapse: collapse; }
+  .uc-table th { text-align: left; font-size: 11px; color: rgba(255,255,255,0.35); padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px; }
+  .uc-table td { font-size: 13px; padding: 6px 8px; color: rgba(255,255,255,0.65); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .rain { color: #74c0fc; }
+  .ops { color: #ffa94d; }
+  .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; }
   .tag-rain { background: rgba(116,192,252,0.15); color: #74c0fc; }
   .tag-ops { background: rgba(255,169,77,0.15); color: #ffa94d; }
-  .uc-bottom { grid-column: 1 / -1; display: flex; gap: 24px; }
-  .uc-bottom .uc-card { flex: 1; }
+  .tag-green { background: rgba(81,207,102,0.15); color: #51cf66; }
+  .uc-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .attr-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .attr-table th { text-align: left; font-size: 11px; color: rgba(255,255,255,0.35); padding: 4px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .attr-table td { font-size: 13px; padding: 5px 8px; color: rgba(255,255,255,0.6); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .attr-table .pct { font-weight: 700; color: #fff; }
+  .sql-block { background: rgba(0,0,0,0.4); border-radius: 8px; padding: 10px 14px; font-size: 11px; color: rgba(169,227,75,0.7); line-height: 1.6; white-space: pre; overflow-x: auto; margin-top: 10px; }
+  .sql-block .kw { color: #74c0fc; }
 
-  /* Slide 5 — Architecture + CTA */
-  .slide-5 { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%); text-align: center; align-items: center; }
-  .slide-5 h2 { font-size: 48px; font-weight: 700; margin-bottom: 40px; }
-  .slide-5 h2 span { background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .arch-flow { display: flex; align-items: center; gap: 12px; margin-bottom: 50px; flex-wrap: wrap; justify-content: center; }
-  .arch-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px 22px; text-align: center; }
-  .arch-box .label { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
-  .arch-box .val { font-size: 17px; font-weight: 600; color: #fff; }
-  .arch-arrow { font-size: 22px; color: rgba(255,255,255,0.2); }
-  .cta-box { background: rgba(102,126,234,0.1); border: 1px solid rgba(102,126,234,0.3); border-radius: 16px; padding: 30px 50px; display: inline-block; }
-  .cta-box code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 20px; color: #a9e34b; background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 8px; display: block; margin-top: 12px; }
-  .cta-box p { font-size: 16px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
-  .features { display: flex; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center; }
-  .feat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 20px; font-size: 14px; color: rgba(255,255,255,0.6); }
+  /* ── Slide 5: What CCP Captured + Next ── */
+  .slide-5 { background: linear-gradient(135deg, #0a0f1a 0%, #15192a 100%); padding: 40px 70px; }
+  .slide-5 h2 { font-size: 40px; font-weight: 700; margin-bottom: 8px; color: #da77f2; }
+  .slide-5 .sub { font-size: 15px; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
+  .cap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .cap-card { background: rgba(218,119,242,0.04); border: 1px solid rgba(218,119,242,0.12); border-radius: 12px; padding: 20px; }
+  .cap-card h3 { font-size: 14px; color: #da77f2; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  .cap-card .team-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
+  .cap-card .team-data { background: rgba(116,192,252,0.15); color: #74c0fc; }
+  .cap-card .team-ops { background: rgba(255,169,77,0.15); color: #ffa94d; }
+  .cap-card .meta { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 10px; }
+  .cap-card ul { list-style: none; padding: 0; }
+  .cap-card li { font-size: 13px; color: rgba(255,255,255,0.6); padding: 3px 0; padding-left: 16px; position: relative; line-height: 1.5; }
+  .cap-card li::before { content: '→'; position: absolute; left: 0; color: rgba(218,119,242,0.5); }
+  .index-preview { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px 22px; margin-bottom: 24px; }
+  .index-preview h3 { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 10px; }
+  .index-row { display: grid; grid-template-columns: 90px 1fr 60px 80px 130px; gap: 8px; font-size: 12px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.5); }
+  .index-row.header { color: rgba(255,255,255,0.3); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .index-row .title-col { color: rgba(255,255,255,0.7); }
+  .scenario-box { background: rgba(81,207,102,0.05); border: 1px solid rgba(81,207,102,0.12); border-radius: 12px; padding: 20px 24px; }
+  .scenario-box h3 { font-size: 16px; color: #51cf66; margin-bottom: 12px; }
+  .scenario-steps { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+  .sc-step { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px 16px; flex: 1; min-width: 200px; }
+  .sc-step .sc-num { font-size: 11px; color: #51cf66; font-weight: 700; margin-bottom: 4px; }
+  .sc-step p { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+  .sc-step .sc-cmd { display: block; margin-top: 6px; font-size: 12px; color: #a9e34b; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 5px; }
+  .sc-arrow { color: rgba(81,207,102,0.3); font-size: 24px; align-self: center; }
+
+  /* ── Slide 6: Architecture + Setup ── */
+  .slide-6 { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%); text-align: center; align-items: center; padding: 40px 70px; }
+  .slide-6 h2 { font-size: 44px; font-weight: 700; margin-bottom: 30px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .arch-flow { display: flex; align-items: center; gap: 8px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+  .arch-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 14px 18px; text-align: center; }
+  .arch-box .a-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+  .arch-box .a-val { font-size: 15px; font-weight: 600; color: #fff; }
+  .arch-box .a-detail { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+  .arch-arrow { font-size: 18px; color: rgba(255,255,255,0.15); }
+  .feat-grid { display: flex; gap: 14px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+  .feat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px 18px; font-size: 13px; color: rgba(255,255,255,0.5); }
   .feat strong { color: #fff; }
+  .type-row { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+  .type-pill { border-radius: 8px; padding: 8px 14px; font-size: 12px; text-align: center; }
+  .type-pill .t-name { font-weight: 700; color: #fff; font-size: 13px; }
+  .type-pill .t-exp { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .t-analysis { background: rgba(116,192,252,0.1); border: 1px solid rgba(116,192,252,0.2); }
+  .t-query { background: rgba(169,227,75,0.1); border: 1px solid rgba(169,227,75,0.2); }
+  .t-playbook { background: rgba(255,169,77,0.1); border: 1px solid rgba(255,169,77,0.2); }
+  .t-decision { background: rgba(218,119,242,0.1); border: 1px solid rgba(218,119,242,0.2); }
+  .t-insight { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.2); }
+  .t-model { background: rgba(102,126,234,0.1); border: 1px solid rgba(102,126,234,0.2); }
+  .cta-box { background: rgba(102,126,234,0.08); border: 1px solid rgba(102,126,234,0.25); border-radius: 14px; padding: 24px 40px; display: inline-block; }
+  .cta-box p { font-size: 15px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+  .cta-box code { font-size: 18px; color: #a9e34b; background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 8px; display: block; }
+  .cta-sub { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.3); }
 </style>
 </head>
 <body>
 
-<!-- SLIDE 1: Title -->
+<!-- ════════════ SLIDE 1: Title ════════════ -->
 <div class="slide slide-1 active" id="s1">
-  <div class="logo-box">
-    <div class="icon">📦</div>
-    <div>
-      <div style="font-size: 14px; color: rgba(255,255,255,0.4); letter-spacing: 3px;">INTRODUCING</div>
-    </div>
+  <div class="badge">Open Source &bull; MIT License</div>
+  <h1>CCP</h1>
+  <div class="sub">Central Context Package</div>
+  <div class="desc">
+    Your team uses AI every day. The insights vanish after every session.<br>
+    CCP captures, reviews, and organizes team knowledge with one command — so nobody redoes work that's already been done.
   </div>
-  <h1><span>CCP</span></h1>
-  <div class="subtitle">Central Context Package</div>
-  <div class="subtitle" style="font-size: 20px; margin-bottom: 20px;">One command to save team knowledge. AI-reviewed. Role-gated. Searchable forever.</div>
-  <div class="tagline">Open Source &bull; MIT License &bull; Works with Claude Code + Claude Desktop</div>
+  <div class="pill-row">
+    <div class="pill"><strong>/kb</strong> slash command</div>
+    <div class="pill"><strong>AI</strong> quality review</div>
+    <div class="pill"><strong>Role-based</strong> access</div>
+    <div class="pill"><strong>GitHub</strong> as storage</div>
+    <div class="pill"><strong>Claude Code</strong> + Desktop</div>
+    <div class="pill"><strong>Auto-sync</strong> every 2h</div>
+  </div>
 </div>
 
-<!-- SLIDE 2: Problem -->
+<!-- ════════════ SLIDE 2: Problem ════════════ -->
 <div class="slide slide-2" id="s2">
   <h2>The Problem</h2>
-  <div class="problem-grid">
-    <div class="problem-card">
-      <div class="stat">60%</div>
+  <div class="p-grid">
+    <div class="p-card">
+      <div class="icon">🔄</div>
       <h3>Duplicate Work</h3>
-      <p>Team members redo analyses that someone else already completed. No shared memory of what's been done, what queries were written, or what was found.</p>
+      <p>Ritik analyzes EOB spikes in Bangalore. Next week, Abhiram does the same analysis for Mumbai — from scratch. Same SQL, same methodology, same 2 hours wasted.</p>
+      <div class="example">Real example: EOB root cause analysis was done 3 times across the data team in Q1. Each person wrote the same SQL independently.</div>
     </div>
-    <div class="problem-card">
-      <div class="stat">0</div>
-      <h3>Knowledge Capture</h3>
-      <p>Insights from AI conversations vanish after each session. Claude helps you find an answer — then it's gone. The next person starts from scratch.</p>
+    <div class="p-card">
+      <div class="icon">💨</div>
+      <h3>Knowledge Vanishes</h3>
+      <p>Claude helps you build a query, find a pattern, solve a bug. Session ends — it's gone. The insight lives in one person's head until they forget it too.</p>
+      <div class="example">No one remembers the runner OT acceptance model's AUC, feature importance, or where the trained model is saved.</div>
     </div>
-    <div class="problem-card">
-      <div class="stat">No Quality Gate</div>
+    <div class="p-card">
+      <div class="icon">⚠️</div>
       <h3>Bad Data Spreads</h3>
-      <p>Vague claims ("SLA improved"), subjective opinions, and stale findings get shared as facts. No review process, no expiry, no accountability.</p>
+      <p>"SLA improved" — by how much? For which zone? Based on what query? Vague claims spread as facts. No review, no expiry, no accountability.</p>
+      <div class="example">"Performance improved significantly" gets forwarded to leadership without any supporting numbers or methodology.</div>
     </div>
-    <div class="problem-card">
-      <div class="stat">Siloed</div>
-      <h3>Teams Don't Connect</h3>
-      <p>Data team finds a pattern. Ops team doesn't know. Product makes decisions without it. Each team's knowledge stays locked in their own conversations.</p>
+    <div class="p-card">
+      <div class="icon">🔒</div>
+      <h3>Teams Are Siloed</h3>
+      <p>Data team discovers rain causes 80% of EOB spikes. Ops team doesn't know. They keep treating it as an attendance problem. Weeks of misaligned effort.</p>
+      <div class="example">The ops playbook for rain days was only written after the data team's analysis — but it took 3 weeks to connect the two teams.</div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 3: Solution -->
+<!-- ════════════ SLIDE 3: How It Works ════════════ -->
 <div class="slide slide-3" id="s3">
-  <h2>The Solution: <span style="color: #a9e34b">/kb</span></h2>
-  <div class="flow-container">
-    <div class="flow-step">
-      <div class="num">1</div>
-      <div>
-        <div class="desc">Do your analysis in Claude Code as usual</div>
+  <h2>How CCP Works</h2>
+  <div class="subtitle">One config file. One command. Two layers of AI review. Role-based access.</div>
+  <div class="how-grid">
+    <div class="how-left">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="label">
+          <strong>Do your work</strong> in Claude Code as usual — analysis, queries, debugging
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div class="label">
+          Save with one command
+          <code class="cmd">/kb EOB Spike Analysis --team data --type analysis</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div class="label">
+          <strong>Secrets/PII scan</strong> — blocks API keys, tokens, Aadhaar numbers, phone numbers. Auto-redacts warnings.
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <div class="label">
+          <strong>AI quality review</strong> — Haiku checks locally before commit. Sonnet reviews on PR. Blocks vague claims, asks for evidence.
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <div class="label">
+          <strong>Role-gated save</strong> — Admins commit directly. Contributors raise PRs. INDEX.md and MASTER-CONTEXT.md auto-update.
+        </div>
       </div>
     </div>
-    <div class="flow-step">
-      <div class="num">2</div>
-      <div>
-        <div class="desc">Save it with one command</div>
-        <div class="cmd" style="margin-top: 8px;">/kb EOB Spike Analysis --team data --type analysis</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="num">3</div>
-      <div>
-        <div class="desc"><strong>AI reviews</strong> your content — blocks vague claims, missing evidence, secrets/PII</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="num">4</div>
-      <div>
-        <div class="desc"><strong>Role-based access</strong> — Admins direct-commit, contributors raise PRs for approval</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="num">5</div>
-      <div>
-        <div class="desc">Knowledge is <strong>indexed, searchable, and auto-summarized</strong> across the company</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 4: Use Case -->
-<div class="slide slide-4" id="s4">
-  <h2>Live Demo: EOB Spike Analysis</h2>
-  <div class="usecase-grid">
-    <div class="uc-card">
-      <h3>The Situation</h3>
-      <div class="highlight">+25% EOB Spike</div>
-      <p>Yesterday, EOB went up across 5 Bangalore clusters. Two distinct patterns emerged.</p>
-    </div>
-    <div class="uc-card">
-      <h3>Root Cause Split</h3>
-      <table class="uc-table">
-        <tr><th>Cluster</th><th>Cause</th><th>Driver</th></tr>
-        <tr><td>Bellandur</td><td class="rain">Rain 42mm</td><td><span class="tag tag-rain">80% weather</span></td></tr>
-        <tr><td>Sarjapur</td><td class="rain">Rain 38mm</td><td><span class="tag tag-rain">80% weather</span></td></tr>
-        <tr><td>Varthur</td><td class="rain">Rain 45mm</td><td><span class="tag tag-rain">80% weather</span></td></tr>
-        <tr><td>Koramangala</td><td class="ops">No rain</td><td><span class="tag tag-ops">50% attendance</span></td></tr>
-        <tr><td>Indiranagar</td><td class="ops">No rain</td><td><span class="tag tag-ops">50% behavior</span></td></tr>
+    <div class="how-right">
+      <h3>ccp.yaml — Single Config</h3>
+      <div class="config-block"><span class="key">roles</span>:
+  <span class="key">admin</span>:
+    <span class="key">users</span>: [<span class="val">ritikguptasnabbit</span>, <span class="val">abhiram-snabbit</span>]
+    <span class="key">can</span>: [<span class="val">direct_commit, approve, skip_review</span>]
+  <span class="key">reviewer</span>:
+    <span class="key">users</span>: [<span class="val">neha-snabbit</span>, <span class="val">ravi-snabbit</span>]
+  <span class="key">contributor</span>:
+    <span class="key">users</span>: [] <span class="cmt"># everyone else</span></div>
+      <h3 style="margin-top: 8px;">Role Permissions</h3>
+      <table class="role-table">
+        <tr><th>Role</th><th>Save</th><th>Review</th><th>AI Review</th></tr>
+        <tr><td class="role-name">Admin</td><td>Direct commit</td><td>Can skip</td><td>Optional</td></tr>
+        <tr><td class="role-name">Reviewer</td><td>PR</td><td>Approve own team</td><td>Required</td></tr>
+        <tr><td class="role-name">Contributor</td><td>PR</td><td>Cannot skip</td><td>Required</td></tr>
       </table>
     </div>
-    <div class="uc-bottom">
-      <div class="uc-card">
-        <h3>What CCP Captured</h3>
-        <p style="margin-bottom: 8px;"><strong style="color:#51cf66;">Data team:</strong> Full EOB analysis with SQL, attribution tables, cluster comparison, and recommendations</p>
-        <p><strong style="color:#ffa94d;">Ops team:</strong> Rain-day mitigation playbook with pre-rain / during / post-rain action steps</p>
-      </div>
-      <div class="uc-card">
-        <h3>What Happens Next</h3>
-        <p style="margin-bottom: 8px;"><strong>Abhiram</strong> opens Claude Code next week for a similar analysis in Mumbai</p>
-        <p style="margin-bottom: 8px;">CCP auto-surfaces: <em>"Found: EOB Spike Analysis for Bangalore — same methodology, reusable SQL"</em></p>
-        <p><strong>Result:</strong> 2 hours saved. Better analysis. No duplication.</p>
+  </div>
+</div>
+
+<!-- ════════════ SLIDE 4: Use Case — EOB ════════════ -->
+<div class="slide slide-4" id="s4">
+  <h2>Use Case: EOB Spike Root Cause</h2>
+  <div class="sub">Company-wide EOB increased 25% on May 4. CCP captured the full analysis and cross-team response.</div>
+
+  <div class="uc-top">
+    <div class="uc-card">
+      <h3>Overall Impact</h3>
+      <div class="big">+25% EOB</div>
+      <table class="uc-table" style="margin-top: 10px;">
+        <tr><th>Metric</th><th>Baseline</th><th>Spike</th><th>Δ</th></tr>
+        <tr><td>Avg EOB</td><td>12.4 min</td><td>15.5 min</td><td style="color:#ff6b6b;">+25%</td></tr>
+        <tr><td>Jobs</td><td>1,840</td><td>2,150</td><td style="color:#ff6b6b;">+17%</td></tr>
+        <tr><td>SLA Breach</td><td>8.2%</td><td>14.6%</td><td style="color:#ff6b6b;">+6.4pp</td></tr>
+      </table>
+    </div>
+    <div class="uc-card">
+      <h3>Cluster Breakdown — Two Distinct Patterns</h3>
+      <table class="uc-table">
+        <tr><th>Cluster</th><th>EOB Δ</th><th>Rain</th><th>Primary Driver</th></tr>
+        <tr><td>Bellandur</td><td>+25%</td><td class="rain">42mm</td><td><span class="tag tag-rain">80% Weather</span> <span class="tag tag-ops">10% Attend</span> <span class="tag tag-ops">10% Behavior</span></td></tr>
+        <tr><td>Sarjapur</td><td>+25%</td><td class="rain">38mm</td><td><span class="tag tag-rain">80% Weather</span> <span class="tag tag-ops">10% Attend</span> <span class="tag tag-ops">10% Behavior</span></td></tr>
+        <tr><td>Varthur</td><td>+25%</td><td class="rain">45mm</td><td><span class="tag tag-rain">80% Weather</span> <span class="tag tag-ops">10% Attend</span> <span class="tag tag-ops">10% Behavior</span></td></tr>
+        <tr><td>Koramangala</td><td>+25%</td><td>0mm</td><td><span class="tag tag-ops">50% Attendance</span> <span class="tag tag-ops">50% Behavior</span></td></tr>
+        <tr><td>Indiranagar</td><td>+25%</td><td>0mm</td><td><span class="tag tag-ops">50% Attendance</span> <span class="tag tag-ops">50% Behavior</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="uc-bottom">
+    <div class="uc-card">
+      <h3>Rain Clusters — Evidence</h3>
+      <ul style="list-style: none; padding: 0; font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7;">
+        <li>→ OSRM travel times <strong style="color:#fff;">35% higher</strong> during rainfall window</li>
+        <li>→ Avg speed dropped from <strong style="color:#fff;">22 km/h → 14 km/h</strong></li>
+        <li>→ 6 runners called off, 4 took shelter breaks (avg 8 min/job)</li>
+      </ul>
+      <div class="sql-block"><span class="kw">SELECT</span> cluster_name,
+  <span class="kw">AVG</span>(<span class="kw">CASE WHEN</span> job_date = '2026-05-03' <span class="kw">THEN</span> eob_minutes <span class="kw">END</span>) baseline,
+  <span class="kw">AVG</span>(<span class="kw">CASE WHEN</span> job_date = '2026-05-04' <span class="kw">THEN</span> eob_minutes <span class="kw">END</span>) spike
+<span class="kw">FROM</span> analytics.job_eob_daily
+<span class="kw">WHERE</span> cluster_name <span class="kw">IN</span> ('Bellandur','Sarjapur','Varthur')
+<span class="kw">GROUP BY</span> 1</div>
+    </div>
+    <div class="uc-card">
+      <h3>Non-Rain Clusters — Evidence</h3>
+      <ul style="list-style: none; padding: 0; font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.7;">
+        <li>→ <strong style="color:#fff;">12 runners absent</strong> (8 no-show, 4 late login)</li>
+        <li>→ Coverage dropped to <strong style="color:#fff;">65%</strong> in afternoon slots</li>
+        <li>→ Avg idle time: <strong style="color:#fff;">9.2 min</strong> vs 4.1 min baseline</li>
+        <li>→ 7 runners flagged for extended breaks</li>
+        <li>→ 3 runners had >15 min gap with no travel justification</li>
+      </ul>
+      <div style="margin-top: 12px; padding: 10px 14px; background: rgba(255,169,77,0.08); border-radius: 8px; border-left: 3px solid #ffa94d;">
+        <div style="font-size: 12px; color: #ffa94d; font-weight: 600; margin-bottom: 4px;">ACTIONABLE</div>
+        <div style="font-size: 12px; color: rgba(255,255,255,0.5);">Flag 7 runners for ops review. Activate OT when attendance < 75%.</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 5: Architecture + CTA -->
+<!-- ════════════ SLIDE 5: What CCP Captured + Scenario ════════════ -->
 <div class="slide slide-5" id="s5">
-  <h2><span>How It Works</span></h2>
+  <h2>What CCP Captured</h2>
+  <div class="sub">Two teams, two entries, one shared knowledge base — automatically indexed and searchable.</div>
+
+  <div class="cap-grid">
+    <div class="cap-card">
+      <h3>Entry 1: Data Team Analysis</h3>
+      <span class="team-badge team-data">data / analysis</span>
+      <div class="meta">Author: ritikguptasnabbit &bull; Trust: draft &bull; Expires: 2026-08-03</div>
+      <ul>
+        <li>Full cluster-level EOB breakdown with baseline vs spike</li>
+        <li>Root cause attribution tables (weather vs attendance vs behavior)</li>
+        <li>Reusable SQL query for EOB by cluster</li>
+        <li>OSRM evidence, GPS speed data, weather API correlation</li>
+        <li>Short/medium/systemic recommendations</li>
+      </ul>
+    </div>
+    <div class="cap-card">
+      <h3>Entry 2: Ops Playbook</h3>
+      <span class="team-badge team-ops">ops / playbook</span>
+      <div class="meta">Author: ritikguptasnabbit &bull; Trust: draft &bull; Expires: 2026-08-03</div>
+      <ul>
+        <li>Pre-rain checklist: activate OT runners, buffer OSRM estimates</li>
+        <li>During-rain monitoring: EOB dashboard, runner redistribution</li>
+        <li>Post-rain: attribution analysis, playbook update, incident report</li>
+        <li>Key contacts with Slack handles</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="index-preview">
+    <h3>INDEX.md — Auto-Generated (5 entries, 2 contributors)</h3>
+    <div class="index-row header"><span>Date</span><span>Title</span><span>Team</span><span>Type</span><span>Author</span></div>
+    <div class="index-row"><span>2026-05-05</span><span class="title-col">EOB Spike Analysis - Bangalore Clusters</span><span>data</span><span><span class="tag tag-rain" style="font-size:10px;">analysis</span></span><span>ritikguptasnabbit</span></div>
+    <div class="index-row"><span>2026-05-05</span><span class="title-col">Rain Day EOB Mitigation Playbook</span><span>ops</span><span><span class="tag tag-ops" style="font-size:10px;">playbook</span></span><span>ritikguptasnabbit</span></div>
+    <div class="index-row"><span>2026-05-05</span><span class="title-col">Runner OT prediction model accuracy</span><span>data</span><span><span class="tag tag-green" style="font-size:10px;">model</span></span><span>ritikguptasnabbit</span></div>
+    <div class="index-row"><span>2026-05-05</span><span class="title-col">Weekend SLA drops 15% in Bangalore</span><span>data</span><span><span class="tag tag-rain" style="font-size:10px;">analysis</span></span><span>ritik</span></div>
+    <div class="index-row"><span>2026-05-05</span><span class="title-col">Zone 3 weekend rider shortage</span><span>ops</span><span><span class="tag tag-ops" style="font-size:10px;">insight</span></span><span>ritikguptasnabbit</span></div>
+  </div>
+
+  <div class="scenario-box">
+    <h3>What Happens Next Week</h3>
+    <div class="scenario-steps">
+      <div class="sc-step">
+        <div class="sc-num">ABHIRAM</div>
+        <p>Opens Claude Code to analyze EOB spikes in <strong>Mumbai</strong></p>
+      </div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-step">
+        <div class="sc-num">CCP AUTO-SEARCHES</div>
+        <p>"Found: EOB Spike Analysis for Bangalore — same methodology, reusable SQL query"</p>
+      </div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-step">
+        <div class="sc-num">RESULT</div>
+        <p><strong>2 hours saved.</strong> Better analysis. Builds on prior work instead of starting from scratch.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SLIDE 6: Architecture + Setup ════════════ -->
+<div class="slide slide-6" id="s6">
+  <h2>Architecture &amp; Setup</h2>
+
   <div class="arch-flow">
-    <div class="arch-box"><div class="label">Save</div><div class="val">/kb command</div></div>
-    <div class="arch-arrow">&rarr;</div>
-    <div class="arch-box"><div class="label">Scan</div><div class="val">Secrets + PII</div></div>
-    <div class="arch-arrow">&rarr;</div>
-    <div class="arch-box"><div class="label">Review</div><div class="val">AI Quality Gate</div></div>
-    <div class="arch-arrow">&rarr;</div>
-    <div class="arch-box"><div class="label">Store</div><div class="val">GitHub Repo</div></div>
-    <div class="arch-arrow">&rarr;</div>
-    <div class="arch-box"><div class="label">Index</div><div class="val">Auto-updated</div></div>
-    <div class="arch-arrow">&rarr;</div>
-    <div class="arch-box"><div class="label">Summarize</div><div class="val">Bi-weekly AI</div></div>
+    <div class="arch-box"><div class="a-label">Command</div><div class="a-val">/kb</div><div class="a-detail">Claude Code skill</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="a-label">Scan</div><div class="a-val">Secrets + PII</div><div class="a-detail">Regex from ccp.yaml</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="a-label">Review 1</div><div class="a-val">Haiku (local)</div><div class="a-detail">Fast quality check</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="a-label">Commit / PR</div><div class="a-val">Role-based</div><div class="a-detail">Admin vs Contributor</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="a-label">Review 2</div><div class="a-val">Sonnet (PR)</div><div class="a-detail">Deep + dedup check</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="a-label">Index</div><div class="a-val">INDEX.md</div><div class="a-detail">GitHub Action</div></div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box"><div class="a-label">Summary</div><div class="a-val">MASTER-CONTEXT</div><div class="a-detail">Bi-weekly AI</div></div>
   </div>
-  <div class="features">
-    <div class="feat"><strong>Role-based:</strong> Admin / Reviewer / Contributor</div>
-    <div class="feat"><strong>AI Review:</strong> Haiku (local) + Sonnet (PR)</div>
+
+  <div class="type-row">
+    <div class="type-pill t-analysis"><div class="t-name">analysis</div><div class="t-exp">90 day expiry</div></div>
+    <div class="type-pill t-query"><div class="t-name">query</div><div class="t-exp">180 day expiry</div></div>
+    <div class="type-pill t-playbook"><div class="t-name">playbook</div><div class="t-exp">90 day expiry</div></div>
+    <div class="type-pill t-decision"><div class="t-name">decision</div><div class="t-exp">365 day expiry</div></div>
+    <div class="type-pill t-insight"><div class="t-name">insight</div><div class="t-exp">45 day expiry</div></div>
+    <div class="type-pill t-model"><div class="t-name">model</div><div class="t-exp">180 day expiry</div></div>
+  </div>
+
+  <div class="feat-grid">
+    <div class="feat"><strong>3 Roles:</strong> Admin / Reviewer / Contributor</div>
+    <div class="feat"><strong>2-Layer AI:</strong> Haiku (local) + Sonnet (PR)</div>
     <div class="feat"><strong>Auto-sync:</strong> Pulls every 2 hours</div>
-    <div class="feat"><strong>Non-tech:</strong> Claude Desktop MCP</div>
+    <div class="feat"><strong>Non-tech:</strong> Claude Desktop MCP server</div>
     <div class="feat"><strong>Open Source:</strong> MIT License</div>
+    <div class="feat"><strong>Zero infra:</strong> GitHub = database</div>
   </div>
+
   <div class="cta-box">
-    <p>Get started in 30 seconds:</p>
+    <p>Setup in 30 seconds:</p>
     <code>curl -sL https://raw.githubusercontent.com/rittikgupta1/ccp/main/setup.sh | bash</code>
+    <div class="cta-sub">Works on Mac &amp; Linux &bull; Needs: git, python3, gh CLI &bull; AI via Vertex AI or Anthropic API</div>
   </div>
 </div>
 
 <!-- Navigation -->
 <div class="nav">
-  <button onclick="prev()">&#8592; Prev</button>
-  <span id="counter">1 / 5</span>
-  <button onclick="next()">Next &#8594;</button>
+  <button onclick="prev()">← Prev</button>
+  <span id="counter">1 / 6</span>
+  <button onclick="next()">Next →</button>
 </div>
 
 <script>
 let current = 0;
 const slides = document.querySelectorAll('.slide');
 const counter = document.getElementById('counter');
-
-function show(n) {
-  slides[current].classList.remove('active');
-  current = (n + slides.length) % slides.length;
-  slides[current].classList.add('active');
-  counter.textContent = `${current + 1} / ${slides.length}`;
-}
-
-function next() { show(current + 1); }
-function prev() { show(current - 1); }
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-});
+function show(n) { slides[current].classList.remove('active'); current = (n + slides.length) % slides.length; slides[current].classList.add('active'); counter.textContent = `${current+1} / ${slides.length}`; }
+function next() { show(current+1); }
+function prev() { show(current-1); }
+document.addEventListener('keydown', e => { if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()} if(e.key==='ArrowLeft'){e.preventDefault();prev()} });
 </script>
 
 </body>
